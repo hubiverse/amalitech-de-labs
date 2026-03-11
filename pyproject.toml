@@ -1,0 +1,12 @@
+[project]
+name = "amalitech-de-labs"
+version = "0.1.0"
+description = "Amalitech Data Engineering Labs - A collection of data engineering exercises and projects for learning and practice."
+authors = [
+    { name = "Hubert Apana",  email = "kwakuhubert@gmail.com" }
+]
+readme = "README.md"
+requires-python = ">=3.14"
+dependencies = [
+    "pandas>=3.0.1",
+]
