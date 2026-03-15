@@ -26,7 +26,7 @@ class MovieSpokenLanguage(BaseModel):
 class Movie(BaseModel):
     model_config = ConfigDict(extra="ignore")
 
-    adult: bool = True
+    adult: bool | None = None
     backdrop_path: str | None = None
     belongs_to_collection: dict | None = None
     budget: float | None = None
