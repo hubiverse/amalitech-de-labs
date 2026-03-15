@@ -1,4 +1,5 @@
 from pydantic import BaseModel, ConfigDict, Field
+from typing import Optional
 
 class MovieGenre(BaseModel):
     model_config = ConfigDict(extra="ignore")
@@ -22,6 +23,42 @@ class MovieSpokenLanguage(BaseModel):
     iso_639_1: str | None = None
     name: str | None = None
     english_name: str | None = None
+
+class MovieCast(BaseModel):
+    model_config = ConfigDict(extra="ignore")
+    adult: bool | None = None
+    gender: int | None = None
+    id: int | None = None
+    known_for_department: str | None = None
+    name: str | None = None
+    original_name: str | None = None
+    popularity: float | None = None
+    profile_path: str | None = None
+    cast_id: int | None = None
+    character: str | None = None
+    credit_id: str | None = None
+    order: int | None = None
+
+
+class MovieCrew(BaseModel):
+    model_config = ConfigDict(extra="ignore")
+    adult: bool | None = None
+    gender: int | None = None
+    id: int | None = None
+    known_for_department: str | None = None
+    name: str | None = None
+    original_name: str | None = None
+    popularity: float | None = None
+    profile_path: str | None = None
+    credit_id: str | None = None
+    department: str | None = None
+    job: str | None = None
+
+class MovieCredits(BaseModel):
+    model_config = ConfigDict(extra="ignore")
+    id: int | None = None
+    cast: list[MovieCast] = Field(default_factory=list)
+    crew: list[MovieCrew] = Field(default_factory=list)
 
 class Movie(BaseModel):
     model_config = ConfigDict(extra="ignore")
@@ -51,3 +88,6 @@ class Movie(BaseModel):
     video: bool | None = None
     vote_average: float | None = None
     vote_count: int | None = None
+
+    cast: list[MovieCast] = Field(default_factory=list)
+    crew: list[MovieCrew] = Field(default_factory=list)
