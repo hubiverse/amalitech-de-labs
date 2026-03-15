@@ -18,12 +18,17 @@ from tmdb_movie.utils.helpers import (
 )
 
 def fetch_movie_by_id(client: httpx.Client, settings: Settings, movie_id: int) -> Movie:
-    response = client.get(
-        movie_url(settings.tmdb_api_base_url, movie_id),
-        headers=auth_headers(settings.tmdb_api_access_token),
-    )
-    response.raise_for_status()
-    return Movie.model_validate(response.json())
+    try:
+        response = client.get(
+            movie_url(settings.tmdb_api_base_url, movie_id),
+            headers=auth_headers(settings.tmdb_api_access_token),
+        )
+        response.raise_for_status()
+        return Movie.model_validate(response.json())
+    except httpx.HTTPError as e:
+        return Movie(id=movie_id, title=f"Movie {movie_id} not found")
+    except Exception as e:
+        return Movie(id=movie_id, title=f"Error fetching movie {movie_id}: {e}")
 
 
 def download_movies_by_ids(settings: Settings, movie_ids: Iterable[int]) -> list[Movie]:

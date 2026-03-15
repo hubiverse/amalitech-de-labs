@@ -7,7 +7,7 @@ class MovieGenre(BaseModel):
 
 class MovieProductionCompany(BaseModel):
     model_config = ConfigDict(extra="ignore")
-    id: int = 0
+    id: int | None = None
     name: str | None = None
     logo_path: str | None = None
     origin_country: str | None = None
