@@ -1,4 +1,6 @@
 import pandas as pd
+import numpy as np
+import ast
 
 from pathlib import Path
 from typing import Iterable
@@ -65,3 +67,67 @@ def filter_movies_by_ids(movie_df: pd.DataFrame, movie_ids: list[int]) -> pd.Dat
     filtered_df = filtered_df.sort_values("_order").drop(columns="_order")
 
     return filtered_df.reset_index(drop=True)
+
+
+def safe_parse(val, key='name'):
+    """Parses JSON-like strings and extracts a specific key, joined by '|'."""
+    if isinstance(val, list):
+        return "|".join([i[key] for i in val if key in i])
+
+    if isinstance(val, dict):
+        return val.get(key, np.nan)
+
+    if isinstance(val, str):
+        if val == "[]" or val == "{}":
+            return np.nan
+        try:
+            # Convert string representation of list/dict to a python object
+            data = ast.literal_eval(val)
+            if isinstance(data, list):
+                return "|".join([i[key] for i in data if key in i])
+            if isinstance(data, dict):
+                return data.get(key, np.nan)
+        except (ValueError, SyntaxError):
+            return np.nan
+
+    return np.nan
+
+def extract_director(crew_list):
+    if isinstance(crew_list, list):
+        directors = [m['name'] for m in crew_list if m.get('job') == 'Director']
+        return "|".join(directors) if directors else np.nan
+
+    elif isinstance(crew_list, str):
+        data = ast.literal_eval(crew_list)
+        if isinstance(data, list):
+            directors = [m['name'] for m in data if m.get('job') == 'Director']
+            return "|".join(directors) if directors else np.nan
+
+    return np.nan
+
+
+def extract_cast(cast_list):
+    if isinstance(cast_list, list):
+        return "|".join([m['name'] for m in cast_list])
+
+    elif isinstance(cast_list, str):
+        data = ast.literal_eval(cast_list)
+        if isinstance(data, list):
+            return "|".join([m['name'] for m in data])
+
+    return np.nan
+
+
+def safe_len(value):
+    if isinstance(value, (list, dict)):
+        return len(value)
+
+    if isinstance(value, str):
+        data = ast.literal_eval(value)
+        if isinstance(data, (list, dict)):
+            return len(data)
+        return len(value)
+
+    if pd.isna(value):
+        return np.nan
+    return np.nan
