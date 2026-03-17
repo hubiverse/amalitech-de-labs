@@ -10,9 +10,6 @@ from .types import Movie
 def movie_url(base_url: str, movie_id: int) -> str:
     return f"{base_url.rstrip('/')}/movie/{movie_id}"
 
-def movie_credits_url(base_url: str, movie_id: int) -> str:
-    return f"{movie_url(base_url, movie_id)}/credits"
-
 def auth_headers(access_token: str) -> dict[str, str]:
     return {
         "Authorization": f"Bearer {access_token}",

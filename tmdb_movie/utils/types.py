@@ -1,5 +1,4 @@
 from pydantic import BaseModel, ConfigDict, Field
-from typing import Optional
 
 class MovieGenre(BaseModel):
     model_config = ConfigDict(extra="ignore")
@@ -39,7 +38,6 @@ class MovieCast(BaseModel):
     credit_id: str | None = None
     order: int | None = None
 
-
 class MovieCrew(BaseModel):
     model_config = ConfigDict(extra="ignore")
     adult: bool | None = None
@@ -53,12 +51,6 @@ class MovieCrew(BaseModel):
     credit_id: str | None = None
     department: str | None = None
     job: str | None = None
-
-class MovieCredits(BaseModel):
-    model_config = ConfigDict(extra="ignore")
-    id: int | None = None
-    cast: list[MovieCast] = Field(default_factory=list)
-    crew: list[MovieCrew] = Field(default_factory=list)
 
 class Movie(BaseModel):
     model_config = ConfigDict(extra="ignore")
