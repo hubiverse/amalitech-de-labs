@@ -7,7 +7,7 @@ TMDB API when fetching movie details, including genres, production companies, pr
  cast, and crew information.
 """
 
-from pydantic import BaseModel, ConfigDict, Field
+from pydantic import BaseModel, ConfigDict, Field, computed_field
 
 class MovieGenre(BaseModel):
     model_config = ConfigDict(extra="ignore")
@@ -92,3 +92,19 @@ class Movie(BaseModel):
 
     cast: list[MovieCast] = Field(default_factory=list)
     crew: list[MovieCrew] = Field(default_factory=list)
+
+    @computed_field(return_type=int)
+    @property
+    def cast_size(self):
+        return  len(self.cast) if self.cast else 0
+
+    @computed_field(return_type=int)
+    @property
+    def crew_size(self):
+        return len(self.crew) if self.crew else 0
+
+    @computed_field(return_type=str | None)
+    @property
+    def director(self):
+        return  "|".join( [m.name for m in self.crew if m.job.lower() == 'director']) if self.crew else None
+

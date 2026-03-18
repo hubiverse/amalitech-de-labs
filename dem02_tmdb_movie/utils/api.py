@@ -172,7 +172,7 @@ def download_movies_by_ids(
 def get_movies_dataframe_from_ids(
         settings: Settings,
         movie_ids: Iterable[int],
-        cache_csv_path: Path | None = None,
+        cache_pickle_pickle: Path | None = None,
         force_redownload: bool = False,
         max_retries: int = 3,
         waite_factor: float = 2.0
@@ -186,7 +186,7 @@ def get_movies_dataframe_from_ids(
     :param settings: Configuration object providing settings related to the download
                      process and API integration.
     :param movie_ids: Collection of unique movie IDs whose details need to be fetched.
-    :param cache_csv_path: Path to the cached CSV file for storing and retrieving movie
+    :param cache_pickle_pickle: Path to the cached CSV file for storing and retrieving movie
                            data. If None, a default path is used.
     :param force_redownload: Whether to ignore existing cached data and force downloading
                              movies for the given IDs.
@@ -199,7 +199,11 @@ def get_movies_dataframe_from_ids(
              - A list of IDs for which data download was unsuccessful.
     :rtype: Tuple[pd.DataFrame, List[int]]
     """
-    path = cache_csv_path or default_cache_path()
+
+    if  cache_pickle_pickle is not None and cache_pickle_pickle.suffix != ".pkl":
+        raise ValueError("Only .pkl files are allowed for cache_pickle_pickle")
+
+    path = cache_pickle_pickle or default_cache_path()
     requested_ids = list(dict.fromkeys(movie_ids))
 
     # Loading logic

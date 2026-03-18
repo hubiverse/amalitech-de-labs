@@ -7,7 +7,6 @@ Helper functions for the application. Utils functions are used to perform variou
 
 import pandas as pd
 import numpy as np
-import ast
 
 from pathlib import Path
 from typing import Iterable
@@ -24,20 +23,20 @@ def auth_headers(access_token: str) -> dict[str, str]:
     }
 
 def default_cache_path() -> Path:
-    return Path(__file__).parent.parent / "data" / "tmdb_movies.csv"
+    return Path(__file__).parent.parent / "data" / "tmdb_movies.pkl"
 
 def save_dataframe(df: pd.DataFrame, path: Path) -> None:
     path.parent.mkdir(parents=True, exist_ok=True)
 
     try:
-        df.to_csv(path, index=False)
+        df.to_pickle(path)
     except Exception:
         raise Exception(f"Failed to save dataframe to csv: {path}")
 
 def load_dataframe(path: Path) -> pd.DataFrame:
     if path.exists():
         try:
-            return pd.read_csv(path)
+            return pd.read_pickle(path)
         except Exception:
             raise Exception(f"Failed to read csv file: {path}")
 
@@ -101,19 +100,18 @@ def filter_movies_by_ids(movie_df: pd.DataFrame, movie_ids: list[int]) -> pd.Dat
 
 def safe_parse(val, key='name'):
     """
-    Parses the input value based on its type to extract specific information associated
-    with the given key. If `val` is a list or dictionary, it processes the content based
-    on the key. If `val` is a string representation of a list or dictionary, it attempts
-    to safely parse it into a Python object using `ast.literal_eval` and then process
-    accordingly. If parsing fails or the input does not conform, it returns NaN.
+    Parses the input value based on its type and extracts information using the specified key.
 
-    :param val: The value to be parsed. It can be of type `list`, `dict`, or `str`. If
-        a string represents a serialized `list` or `dict`, it will attempt to parse it.
-    :param key: The key to extract information from the given input value. Defaults to 'name'.
-    :return: Returns a single string composed of the extracted values separated by a
-        pipe (`|`) if the input is a list or parsed list. For dictionaries or parsed
-        dictionaries, it returns the value associated with the provided key. If the
-        input cannot be processed, `np.nan` is returned.
+    The function processes input data which can either be a list or a dictionary. If the input
+    value is a list, it concatenates the values corresponding to the specified key in each
+    dictionary within the list, using a pipe ``|`` delimiter. If the input is a dictionary,
+    it extracts and returns the value associated with the specified key. If the key is not
+    found or the input data type is unsupported, ``numpy.nan`` is returned.
+
+    :param val: The input value to be parsed. Can be of type ``list`` or ``dict``.
+    :param key: The key to extract data from the input. Defaults to 'name'.
+    :return: A concatenated string of values, a single value from the dictionary,
+             or ``numpy.nan`` if the key isn't found or an unsupported data type is given.
     """
     if isinstance(val, list):
         return "|".join([i[key] for i in val if key in i])
@@ -121,95 +119,26 @@ def safe_parse(val, key='name'):
     if isinstance(val, dict):
         return val.get(key, np.nan)
 
-    if isinstance(val, str):
-        if val == "[]" or val == "{}":
-            return np.nan
-        try:
-            # Convert string representation of list/dict to a python object
-            data = ast.literal_eval(val)
-            if isinstance(data, list):
-                return "|".join([i[key] for i in data if key in i])
-            if isinstance(data, dict):
-                return data.get(key, np.nan)
-        except (ValueError, SyntaxError):
-            return np.nan
-
     return np.nan
-
-def extract_director(crew_list):
-    """
-    Extracts the names of directors from a crew list.
-
-    This function parses the input `crew_list` to identify and extract the names of
-    individuals whose job is marked as "Director". The resulting names are concatenated
-    into a single string, separated by the "|" symbol. If no directors are found or input
-    is invalid, the function returns `numpy.nan`. Both list and string representations
-    of the crew data are supported.
-
-    :param crew_list: A list or string representation of crew details containing dictionaries
-        with at least 'name' and 'job' keys.
-    :return: A string of director names joined by the "|" symbol, or `numpy.nan` if no
-        directors are found or the input is invalid.
-    """
-    if isinstance(crew_list, list):
-        directors = [m['name'] for m in crew_list if m.get('job').lower() == 'director']
-        return "|".join(directors) if directors else np.nan
-
-    elif isinstance(crew_list, str):
-        data = ast.literal_eval(crew_list)
-        if isinstance(data, list):
-            directors = [m['name'] for m in data if m.get('job').lower() == 'director']
-            return "|".join(directors) if directors else np.nan
-
-    return np.nan
-
 
 def extract_cast(cast_list):
     """
-    Extracts and formats a list of cast member names into a single string separated by '|'.
+    Extracts and formats the names of cast members from the given list.
 
-    This function processes input data expected to represent a list of cast members, either
-    in Python list format or as a string representation. The function will return a formatted string
-    with cast member names concatenated using the '|' symbol. If input data is invalid or does not
-    match the expected structure, the return value will be `numpy.nan`.
+    Checks if the input is a list. If true, it extracts the 'name'
+    attribute from each dictionary in the list and joins them into a single
+    string separated by a vertical bar ('|'). If the input is not a list,
+    returns a numpy NaN value.
 
-    :param cast_list: The input data representing cast members. It can be a list of dictionaries where
-                      each dictionary contains a 'name' key, or a string representation of such a list.
-    :returns: A string with the concatenated cast member names separated by '|', or `numpy.nan` if the
-              input is invalid.
+    :param cast_list: List of dictionaries, where each dictionary represents
+        a cast member and contains a 'name' key.
+    :type cast_list: list
+    :return: A string of concatenated cast member names separated by a
+        vertical bar ('|'), or numpy NaN if the input is not a list.
+    :rtype: str or float
     """
+
     if isinstance(cast_list, list):
         return "|".join([m['name'] for m in cast_list])
-
-    elif isinstance(cast_list, str):
-        data = ast.literal_eval(cast_list)
-        if isinstance(data, list):
-            return "|".join([m['name'] for m in data])
-
-    return np.nan
-
-
-def safe_len(value):
-    """
-    Compute the length of the input value safely.
-
-    This function determines the length of the input value based on its type. It works
-    with strings, lists, dictionaries, and handles NaN values specifically. If the input
-    is a string, it attempts to evaluate it as a literal and compute the length of the
-    resulting object if it's a list or dictionary. Otherwise, it returns NaN.
-
-    :param value: Input value, which can be a string, list, dictionary, or another type.
-    :type value: Any
-    :return: The computed length of the input value if applicable, or NaN otherwise.
-    :rtype: int or float
-    """
-    if isinstance(value, (list, dict)):
-        return len(value)
-
-    if isinstance(value, str):
-        data = ast.literal_eval(value)
-        if isinstance(data, (list, dict)):
-            return len(data)
-        return len(value)
 
     return np.nan
