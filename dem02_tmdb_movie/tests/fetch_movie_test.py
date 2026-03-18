@@ -26,7 +26,7 @@ import httpx
 import pytest
 import respx
 from httpx import Response
-from tmdb_movie.utils import fetch_movie_by_id, movie_url
+from dem02_tmdb_movie.utils import fetch_movie_by_id, movie_url
 from config import Settings
 
 

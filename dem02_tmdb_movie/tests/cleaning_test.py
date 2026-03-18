@@ -3,7 +3,7 @@
 """
 
 import pandas as pd
-from tmdb_movie.utils import clean_movie_df
+from dem02_tmdb_movie.utils import clean_movie_df
 
 def test_cleaning_pipeline_logic():
     budget = 356000000

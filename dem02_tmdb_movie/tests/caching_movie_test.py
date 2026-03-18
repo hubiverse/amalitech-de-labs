@@ -33,7 +33,7 @@ import pandas as pd
 from httpx import Response
 from pathlib import Path
 
-from tmdb_movie.utils import get_movies_dataframe_from_ids, movie_url
+from dem02_tmdb_movie.utils import get_movies_dataframe_from_ids, movie_url
 from config import Settings
 
 

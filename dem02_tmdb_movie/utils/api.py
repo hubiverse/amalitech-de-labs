@@ -26,8 +26,8 @@ from pathlib import Path
 from typing import Iterable
 
 from config import Settings
-from tmdb_movie.utils.types import Movie
-from tmdb_movie.utils.helpers import (
+from dem02_tmdb_movie.utils.types import Movie
+from dem02_tmdb_movie.utils.helpers import (
     movie_url,
     auth_headers,
     default_cache_path,

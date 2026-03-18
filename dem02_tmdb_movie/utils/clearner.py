@@ -18,7 +18,7 @@ Functions:
 import pandas as pd
 import numpy as np
 
-from tmdb_movie.utils.helpers import (
+from dem02_tmdb_movie.utils.helpers import (
     safe_parse,
     extract_director,
     safe_len,
