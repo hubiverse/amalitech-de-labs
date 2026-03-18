@@ -1,3 +1,11 @@
+"""
+Author: Hubert Apana
+Date: 2026-03-18
+
+Configuration settings for the application. Uses pydantic_settings for environment variable management.
+`.env` file in the root directory is used for environment variables.
+"""
+
 from pathlib import Path
 from pydantic_settings import BaseSettings, SettingsConfigDict
 

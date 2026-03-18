@@ -1,3 +1,20 @@
+"""
+Author: Hubert Apana
+Date: 2026-03-18
+
+Data cleaning function for movie DataFrame.
+
+This module provides a utility function for cleaning and preprocessing
+a movie dataset represented as a pandas DataFrame. The function handles
+operations such as dropping irrelevant columns, extracting relevant data
+from JSON-like columns, type conversions, zero-value handling, value imputation,
+string cleanup, and filtering to ensure the dataset is prepared for subsequent
+analysis or modeling.
+
+Functions:
+    - clean_movie_df: Cleans and preprocesses the given DataFrame based
+      on specified parameters and returns the cleaned DataFrame.
+"""
 import pandas as pd
 import numpy as np
 
@@ -9,6 +26,22 @@ from tmdb_movie.utils.helpers import (
 )
 
 def clean_movie_df(df: pd.DataFrame, cols_to_drop=None, final_column_order=None) -> pd.DataFrame:
+    """
+    Cleans and preprocesses a DataFrame containing movie data.
+
+    This function processes and cleans a DataFrame by handling missing or malformed
+    values, extracting relevant information from nested structures, standardizing
+    data types, and dropping irrelevant columns. It also computes additional
+    features and ensures the resulting DataFrame meets specific constraints for
+    further analysis.
+
+    :param df: Input DataFrame containing raw movie data.
+    :param cols_to_drop: List of column names to be dropped from the DataFrame.
+                         If None, no columns are dropped.
+    :param final_column_order: List specifying the desired column ordering in the
+                               final DataFrame. If None, no reordering is done.
+    :return: A cleaned and preprocessed DataFrame ready for analysis.
+    """
     if final_column_order is None:
         final_column_order = []
     if cols_to_drop is None:

@@ -1,3 +1,12 @@
+"""
+Author: Hubert Apana
+Date: 2026-03-18
+
+Pydantic models for TMDB movie data. These models are used to parse and validate the data returned by the
+TMDB API when fetching movie details, including genres, production companies, production countries, spoken languages,
+ cast, and crew information.
+"""
+
 from pydantic import BaseModel, ConfigDict, Field
 
 class MovieGenre(BaseModel):
