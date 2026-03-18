@@ -22,4 +22,10 @@ dependencies = [
 ]
 
 [dependency-groups]
-dev = []
+dev = [
+    "pytest>=9.0.2",
+    "respx>=0.22.0",
+]
+
+[tool.pytest.ini_options]
+pythonpath = ["."]
