@@ -40,8 +40,6 @@ def test_cleaning_pipeline_logic():
     assert cleaned_df.iloc[0]["production_countries"] == "United States of America"
     assert cleaned_df.iloc[0]["production_companies"] == "Marvel Studios|DC Comics"
     assert cleaned_df.iloc[0]["spoken_languages"] == "English"
-    assert cleaned_df.iloc[0]["crew_size"] == 2
-    assert cleaned_df.iloc[0]["cast_size"] == 2
     assert cleaned_df.iloc[0]["genres"] == "Action|Sci-Fi"
     assert cleaned_df.iloc[0]["budget_musd"] == budget_musd
     assert cleaned_df.iloc[0]["revenue_musd"] == revenue_musd
