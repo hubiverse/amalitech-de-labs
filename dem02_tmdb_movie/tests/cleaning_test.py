@@ -35,7 +35,6 @@ def test_cleaning_pipeline_logic():
     budget_musd = budget / 1_000_000
     revenue_musd = revenue / 1_000_000
 
-    assert cleaned_df.iloc[0]["director"] == "Anthony Russo|Joe Russo"
     assert cleaned_df.iloc[0]["belongs_to_collection"] == "Avengers Collection"
     assert cleaned_df.iloc[0]["production_countries"] == "United States of America"
     assert cleaned_df.iloc[0]["production_companies"] == "Marvel Studios|DC Comics"

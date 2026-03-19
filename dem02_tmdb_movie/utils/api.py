@@ -172,7 +172,7 @@ def download_movies_by_ids(
 def get_movies_dataframe_from_ids(
         settings: Settings,
         movie_ids: Iterable[int],
-        cache_pickle_pickle: Path | None = None,
+        cache_pickle_path: Path | None = None,
         force_redownload: bool = False,
         max_retries: int = 3,
         waite_factor: float = 2.0
@@ -200,10 +200,10 @@ def get_movies_dataframe_from_ids(
     :rtype: Tuple[pd.DataFrame, List[int]]
     """
 
-    if  cache_pickle_pickle is not None and cache_pickle_pickle.suffix != ".pkl":
+    if  cache_pickle_path is not None and cache_pickle_path.suffix != ".pkl":
         raise ValueError("Only .pkl files are allowed for cache_pickle_pickle")
 
-    path = cache_pickle_pickle or default_cache_path()
+    path = cache_pickle_path or default_cache_path()
     requested_ids = list(dict.fromkeys(movie_ids))
 
     # Loading logic

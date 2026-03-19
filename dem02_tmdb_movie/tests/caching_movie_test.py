@@ -59,9 +59,9 @@ def test_cache_logic_avoids_network_call(mock_settings, tmp_path):
     """
     movie_id = 19995
     # Setup a fake cache file
-    cache_file = tmp_path / "cache.csv"
+    cache_file = tmp_path / "cache.pkl"
     existing_data = pd.DataFrame({"id": [movie_id], "title": ["Avatar"]})
-    existing_data.to_csv(cache_file, index=False)
+    existing_data.to_pickle(cache_file)
 
     # Mock the API
     api_route = respx.get(movie_url(mock_settings.tmdb_api_base_url, movie_id)).mock(
@@ -72,7 +72,7 @@ def test_cache_logic_avoids_network_call(mock_settings, tmp_path):
     df, failed = get_movies_dataframe_from_ids(
         settings=mock_settings,
         movie_ids=[movie_id],
-        cache_csv_path=cache_file,
+        cache_pickle_path=cache_file,
         force_redownload=False
     )
 
@@ -88,8 +88,8 @@ def test_cache_partial_hit(mock_settings, tmp_path):
     Expectation: Only 1 API call is made (for ID 2).
     """
     movie_1_id = 1
-    cache_file = tmp_path / "cache.csv"
-    pd.DataFrame({"id": [movie_1_id], "title": ["Movie 1"]}).to_csv(cache_file, index=False)
+    cache_file = tmp_path / "cache.pkl"
+    pd.DataFrame({"id": [movie_1_id], "title": ["Movie 1"]}).to_pickle(cache_file)
 
     # Mock API for movie 2
     movie_2_id = 2
@@ -102,7 +102,7 @@ def test_cache_partial_hit(mock_settings, tmp_path):
     df, failed = get_movies_dataframe_from_ids(
         settings=mock_settings,
         movie_ids=[movie_1_id, movie_2_id],
-        cache_csv_path=cache_file
+        cache_pickle_path=cache_file
     )
 
     assert route_2.call_count == 1
@@ -117,8 +117,8 @@ def test_force_redownload_ignores_cache(mock_settings, tmp_path):
     Expectation: API is called despite existing data.
     """
     movie_id = 1
-    cache_file = tmp_path / "cache.csv"
-    pd.DataFrame({"id": [movie_id], "title": ["Old Title"]}).to_csv(cache_file, index=False)
+    cache_file = tmp_path / "cache.pkl"
+    pd.DataFrame({"id": [movie_id], "title": ["Old Title"]}).to_pickle(cache_file)
 
     api_route = respx.get(movie_url(mock_settings.tmdb_api_base_url, movie_id)).mock(
         return_value=Response(200, json={"id": movie_id, "title": "New Title", "status": "Released"})
@@ -127,7 +127,7 @@ def test_force_redownload_ignores_cache(mock_settings, tmp_path):
     df, failed = get_movies_dataframe_from_ids(
         settings=mock_settings,
         movie_ids=[movie_id],
-        cache_csv_path=cache_file,
+        cache_pickle_path=cache_file,
         force_redownload=True
     )
 
@@ -143,14 +143,14 @@ def test_failed_api_returns_ids_and_doesnt_crash(mock_settings, tmp_path):
     Scenario: Requesting a movie that doesn't exist (404).
     Expectation: The ID is returned in the 'failed' list.
     """
-    cache_file = tmp_path / "no_file.csv"
+    cache_file = tmp_path / "no_file.pkl"
     movie_id = 404
     respx.get(movie_url(mock_settings.tmdb_api_base_url, movie_id)).mock(return_value=Response(404))
 
     df, failed = get_movies_dataframe_from_ids(
         settings=mock_settings,
         movie_ids=[movie_id],
-        cache_csv_path=cache_file
+        cache_pickle_path=cache_file
     )
 
     assert movie_id in failed
