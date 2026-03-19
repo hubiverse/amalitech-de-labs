@@ -52,5 +52,4 @@ This is not a group project, meaning you will design the workflow, structure the
 required calculations independently. 
 
 **Project is located in the `dem02_tmdb_movie` directory.**
-
-
+_Follow the jupyter notebook `main.ipynb` for analysis and easy code execution_
